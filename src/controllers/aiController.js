@@ -1,4 +1,4 @@
-const OpenAI = require('@openai/api');
+const OpenAI = require('openai');
 const prisma = require('../prismaClient');
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
