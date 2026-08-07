@@ -37,4 +37,4 @@ const listCertificates = async (req, res) => {
   } catch (err) { res.status(500).json({ error: 'Server error' }); }
 };
 
-module.exports = { summary, issueCertificate };
+module.exports = { summary, issueCertificate, listCertificates };
