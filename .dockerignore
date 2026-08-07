@@ -1,5 +1,4 @@
 node_modules
-.npmrc
-.env
 npm-debug.log
-Dockerfile
+.env
+.DS_Store

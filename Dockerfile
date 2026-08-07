@@ -1,17 +1,14 @@
 FROM node:18-alpine
 
+# Create app directory
 WORKDIR /app
 
-# install deps
+# Install dependencies
 COPY package.json package-lock.json* ./
-RUN npm install --production
+RUN npm ci --only=production || npm install --production
 
-# copy source
-COPY prisma ./prisma
-COPY src ./src
-
-# generate prisma client
-RUN npx prisma generate || true
+# Copy app source
+COPY . .
 
 ENV NODE_ENV=production
 EXPOSE 5000
