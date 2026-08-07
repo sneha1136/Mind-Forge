@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mind-Forge — AI Learning & Mastery Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+
+  <!-- Sticky Header -->
+  <header>
+    <div class="logo-container">
+      <div class="logo-icon">⚡</div>
+      <div class="logo-text">Mind-Forge</div>
+    </div>
+
+    <nav>
+      <button class="nav-btn active" onclick="switchTab('ai-forge')">🤖 AI Quiz Forge</button>
+      <button class="nav-btn" onclick="switchTab('flashcards')">🎴 Flashcards</button>
+      <button class="nav-btn" onclick="switchTab('analytics')">📊 Mastery Matrix</button>
+      <button class="nav-btn" onclick="switchTab('certificates')">📜 Certificate</button>
+      <button class="nav-btn" onclick="switchTab('platforms')">🔗 Linked Profiles</button>
+      <button class="nav-btn" onclick="switchTab('lounge')">💬 Study Lounge</button>
+    </nav>
+
+    <div class="user-status">
+      <div class="status-badge" id="api-status">
+        <span class="status-dot"></span>
+        <span id="api-status-text">Backend Connected</span>
+      </div>
+      <button class="btn-primary" id="auth-btn" onclick="openAuthModal()">Sign In / Register</button>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main>
+    
+    <!-- Tab 1: AI Quiz Forge -->
+    <section id="ai-forge" class="tab-content active">
+      <div class="card-header" style="margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.8rem;">🤖 AI Question Forge</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Generate tailored questions powered by GPT-4o-mini and get instant scoring</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Configuration Card -->
+        <div class="card">
+          <h3 class="card-title">⚙️ Configure Question</h3>
+          <form id="ai-config-form" onsubmit="handleGenerateQuestion(event)">
+            <div class="form-group">
+              <label>Topic / Subject</label>
+              <select id="ai-topic">
+                <option value="Data Structures & Algorithms">Data Structures & Algorithms</option>
+                <option value="System Design">System Design & Architecture</option>
+                <option value="React & Frontend Design">React & Modern Frontend</option>
+                <option value="Node.js & Express">Node.js & Backend Systems</option>
+                <option value="PostgreSQL & Database Optimization">PostgreSQL & Database Optimization</option>
+              </select>
+            </div>
+
+            <div class="grid-2">
+              <div class="form-group">
+                <label>Question Mode</label>
+                <select id="ai-mode">
+                  <option value="mcq">Multiple Choice (MCQ)</option>
+                  <option value="written">Conceptual Written</option>
+                  <option value="oral">Oral / Viva Voice</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Difficulty Tier</label>
+                <select id="ai-difficulty">
+                  <option value="Novice">Novice (Fundamentals)</option>
+                  <option value="Moderate">Moderate (Intermediate)</option>
+                  <option value="Advanced">Advanced (Expert)</option>
+                  <option value="Competitive_Topper">Competitive Topper 🔥</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">✨ Forge AI Question</button>
+          </form>
+        </div>
+
+        <!-- Question Display & Interactive Test -->
+        <div class="card" id="question-box">
+          <h3 class="card-title">📝 Active Question</h3>
+          <div id="ai-question-content" style="margin-top: 1rem; color: var(--text-muted);">
+            Click <strong>"Forge AI Question"</strong> to generate a problem tailored to your difficulty level.
+          </div>
+          <div id="ai-answer-section" style="display: none; margin-top: 1.5rem;">
+            <div class="form-group">
+              <label>Your Answer</label>
+              <textarea id="user-answer-input" rows="4" placeholder="Type your explanation or choice here..."></textarea>
+            </div>
+            <button class="btn-primary" onclick="handleSubmitAnswer()">🚀 Submit & Evaluate Answer</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Spaced Repetition Flashcards -->
+    <section id="flashcards" class="tab-content">
+      <div class="card-header" style="margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.8rem;">🎴 Spaced Repetition Flashcards</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Flip cards to test memory and optimize review intervals (0 to 14 days)</p>
+        </div>
+        <button class="btn-primary" onclick="openNewCardModal()">+ Create New Flashcard</button>
+      </div>
+
+      <div class="grid-3" id="flashcards-container">
+        <!-- Sample Card 1 -->
+        <div class="flashcard-3d" onclick="this.classList.toggle('flipped')">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">SYSTEM DESIGN</span>
+              <p style="font-size: 1.1rem; font-weight: 600;">What is CAP Theorem in distributed databases?</p>
+              <span style="font-size: 0.75rem; color: var(--text-dim);">Click to flip 🔄</span>
+            </div>
+            <div class="flashcard-back">
+              <span style="font-size: 0.8rem; color: #10b981; font-weight: 600;">ANSWER</span>
+              <p style="font-size: 0.95rem;">CAP states a distributed system can only provide 2 out of 3 guarantees: Consistency, Availability, and Partition Tolerance.</p>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Interval: 10 days (Mastered ✅)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Card 2 -->
+        <div class="flashcard-3d" onclick="this.classList.toggle('flipped')">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">REACT & JAVASCRIPT</span>
+              <p style="font-size: 1.1rem; font-weight: 600;">How does Event Loop handle Microtasks vs Macrotasks?</p>
+              <span style="font-size: 0.75rem; color: var(--text-dim);">Click to flip 🔄</span>
+            </div>
+            <div class="flashcard-back">
+              <span style="font-size: 0.8rem; color: #10b981; font-weight: 600;">ANSWER</span>
+              <p style="font-size: 0.95rem;">Microtasks (Promises, process.nextTick) run completely before the next Macrotask (setTimeout, setInterval) is picked from the queue.</p>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Interval: 5 days</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sample Card 3 -->
+        <div class="flashcard-3d" onclick="this.classList.toggle('flipped')">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">POSTGRESQL</span>
+              <p style="font-size: 1.1rem; font-weight: 600;">What is B-Tree Indexing in Relational DBs?</p>
+              <span style="font-size: 0.75rem; color: var(--text-dim);">Click to flip 🔄</span>
+            </div>
+            <div class="flashcard-back">
+              <span style="font-size: 0.8rem; color: #10b981; font-weight: 600;">ANSWER</span>
+              <p style="font-size: 0.95rem;">Self-balancing tree data structure that maintains sorted data and allows searches, sequential access, insertions, and deletions in O(log n) time.</p>
+              <span style="font-size: 0.75rem; color: var(--text-muted);">Interval: 12 days (Mastered ✅)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Mastery Matrix & Analytics -->
+    <section id="analytics" class="tab-content">
+      <div class="card-header" style="margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.8rem;">📊 Performance & Mastery Matrix</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Real-time analytics on your retention rate, mastered concepts, and review streak</p>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom: 2rem;">
+        <div class="card stat-card">
+          <div class="stat-icon" style="background: rgba(99, 102, 241, 0.15); color: #6366f1;">🧠</div>
+          <div>
+            <div class="stat-val" id="stat-total">18</div>
+            <div class="stat-label">Total Cards Reviewed</div>
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">🏆</div>
+          <div>
+            <div class="stat-val" id="stat-mastered">12</div>
+            <div class="stat-label">Mastered Concepts</div>
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-icon" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">📈</div>
+          <div>
+            <div class="stat-val" id="stat-retention">85%</div>
+            <div class="stat-label">Retention Rate</div>
+          </div>
+        </div>
+
+        <div class="card stat-card">
+          <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">🔥</div>
+          <div>
+            <div class="stat-val" id="stat-streak">7 Days</div>
+            <div class="stat-label">Active Review Streak</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">🚀 Mastery Trajectory</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Your knowledge retention curve is 15% higher than average learners this week!</p>
+      </div>
+    </section>
+
+    <!-- Tab 4: Verified Certificate -->
+    <section id="certificates" class="tab-content">
+      <div class="card-header" style="margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.8rem;">📜 Cryptographic Verified Certificate</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Earn HMAC SHA-256 signed digital certificates upon completing study milestones</p>
+        </div>
+        <button class="btn-primary" onclick="handleIssueCertificate()">🎓 Claim Verified Certificate</button>
+      </div>
+
+      <div class="card cert-card" id="cert-display">
+        <div class="cert-seal">🏅</div>
+        <h2 style="font-family: var(--font-heading); font-size: 2rem;">Mind-Forge Mastery Certificate</h2>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">This certifies that the user has verified proficiency in Advanced System Design & Algorithms</p>
+        <div class="cert-hash" id="cert-hash-val">HMAC-SHA256: 8f9b2e4a7c1d3f5e6a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f</div>
+      </div>
+    </section>
+
+    <!-- Tab 5: Linked Profiles -->
+    <section id="platforms" class="tab-content">
+      <div class="card-header" style="margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.8rem;">🔗 Linked Developer Platforms</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Connect your coding profiles to aggregate proof of work</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <form id="linked-form" onsubmit="handleSaveLinked(event)">
+          <div class="grid-2">
+            <div class="form-group">
+              <label>🐙 GitHub Username</label>
+              <input type="text" id="link-github" placeholder="e.g. sneha1136">
+            </div>
+
+            <div class="form-group">
+              <label>⚡ LeetCode Handle</label>
+              <input type="text" id="link-leetcode" placeholder="e.g. sneha_code">
+            </div>
+
+            <div class="form-group">
+              <label>👨‍💻 CodeChef Handle</label>
+              <input type="text" id="link-codechef" placeholder="e.g. sneha_chef">
+            </div>
+
+            <div class="form-group">
+              <label>💼 LinkedIn URL</label>
+              <input type="text" id="link-linkedin" placeholder="e.g. linkedin.com/in/sneha">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-primary" style="margin-top: 1rem;">💾 Save Linked Accounts</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Tab 6: Live Study Lounge -->
+    <section id="lounge" class="tab-content">
+      <div class="card-header" style="margin-bottom: 2rem;">
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.8rem;">💬 Live Academic Study Lounge</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Real-time Socket.IO chat moderated by AI for academic topics</p>
+        </div>
+      </div>
+
+      <div class="card chat-container">
+        <div class="chat-messages" id="chat-box">
+          <div class="chat-bubble other">
+            <strong>System:</strong> Welcome to Mind-Forge Global Study Lounge! Messages are AI-moderated.
+          </div>
+          <div class="chat-bubble other">
+            <strong>Alex:</strong> Anyone practicing System Design load balancer questions?
+          </div>
+          <div class="chat-bubble mine">
+            <strong>You:</strong> Yes! Just reviewed Consistent Hashing flashcard.
+          </div>
+        </div>
+
+        <div class="chat-input-bar">
+          <input type="text" id="chat-input" placeholder="Type an academic message..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+          <button class="btn-primary" onclick="sendChatMessage()">Send 📤</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal">
+      <h3 class="card-title" style="margin-bottom: 1rem;">Mind-Forge Account</h3>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="auth-email" placeholder="user@example.com">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="auth-password" placeholder="••••••••">
+      </div>
+      <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem;">
+        <button class="btn-primary" style="flex: 1;" onclick="handleLogin()">Sign In</button>
+        <button class="btn-primary" style="flex: 1; background: rgba(255,255,255,0.08);" onclick="handleRegister()">Register</button>
+      </div>
+      <button style="width: 100%; margin-top: 1rem; background: transparent; border: none; color: var(--text-dim); cursor: pointer;" onclick="closeAuthModal()">Close</button>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
