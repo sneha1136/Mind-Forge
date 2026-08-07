@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  Novice
+  Moderate
+  Advanced
+  Competitive_Topper
+}
+
+enum Mode {
+  written
+  oral
+  mcq
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String?
+  email         String   @unique
+  passwordHash  String
+  ageGroup      String?
+  pace          Int?     
+  resilience    Int?
+  distraction   Int?
+  status        Status   @default(Novice)
+  archetype     String?
+  track         String?
+  offenseCount  Int      @default(0)
+  chatBanned    Boolean  @default(false)
+  linked        LinkedPlatforms?
+  flashcards    Flashcard[]
+  assessments   AssessmentResult[]
+  certificates  Certificate[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model LinkedPlatforms {
+  id      String @id @default(uuid())
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String @unique
+  leetcode String?
+  github   String?
+  codechef String?
+  linkedin String?
+}
+
+model Flashcard {
+  id             String   @id @default(uuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String
+  question       String
+  interval       Int      @default(0) // days 0-14
+  nextReviewDate DateTime?
+  createdAt      DateTime @default(now())
+}
+
+model AssessmentResult {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  subTopic  String
+  mode      Mode
+  score     Float
+  feedback  String?
+  createdAt DateTime @default(now())
+}
+
+model Certificate {
+  id              String   @id @default(uuid())
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String
+  certificateHash String   @unique
+  issuedAt        DateTime
+}
