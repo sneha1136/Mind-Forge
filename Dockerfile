@@ -1,17 +1,20 @@
 FROM node:18-alpine
 
+# Install OpenSSL for Prisma engine on Alpine
+RUN apk add --no-cache openssl
+
 # Create app directory
 WORKDIR /app
 
-# Install all deps (includes prisma CLI needed for generate)
+# Copy package manifests and Prisma schema before running npm install
 COPY package.json package-lock.json* ./
+COPY prisma ./prisma/
+
+# Install dependencies (runs postinstall prisma generate)
 RUN npm install --production=false
 
 # Copy app source
 COPY . .
-
-# Generate Prisma Client (required before running the app)
-RUN npx prisma generate
 
 ENV NODE_ENV=production
 EXPOSE 5000
