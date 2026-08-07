@@ -1,5 +1,5 @@
 const prisma = require('../prismaClient');
-const OpenAI = require('@openai/api');
+const OpenAI = require('openai');
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const FAST_BLOCK = [ 'http://', 'https://', 'buy now', 'subscribe', 'free trial', 'discord.gg', 'discord.com', 'spam' ];
