@@ -8,6 +8,8 @@ const userRoutes = require('./routes/userRoutes');
 const flashcardRoutes = require('./routes/flashcardRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 const analyticsRoutes = require('./routes/analyticsRoutes');
+const assessmentRoutes = require('./routes/assessmentRoutes');
+const linkedRoutes = require('./routes/linkedRoutes');
 const setupSocket = require('./socket');
 
 const app = express();
@@ -20,6 +22,8 @@ app.use('/api/user', userRoutes);
 app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/assessments', assessmentRoutes);
+app.use('/api/linked-platforms', linkedRoutes);
 
 app.get('/', (req, res) => res.json({ ok: true }));
 

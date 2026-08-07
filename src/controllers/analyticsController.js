@@ -29,4 +29,12 @@ const issueCertificate = async (req, res) => {
   } catch (err) { res.status(500).json({ error: 'Server error' }); }
 };
 
+const listCertificates = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const certs = await prisma.certificate.findMany({ where: { userId }, orderBy: { issuedAt: 'desc' } });
+    res.json(certs);
+  } catch (err) { res.status(500).json({ error: 'Server error' }); }
+};
+
 module.exports = { summary, issueCertificate };
