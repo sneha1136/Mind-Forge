@@ -1,0 +1,46 @@
+/* Print / PDF Styles */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Hide interactive elements, forms, navigation, and save buttons during print */
+  nav,
+  form,
+  button,
+  a[href="/saved-trips"],
+  .no-print {
+    display: none !important;
+  }
+
+  /* Optimize cards for PDF printing */
+  .bg-slate-900,
+  .bg-slate-800\/60,
+  .bg-slate-800 {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+
+  h1, h2, h3, h4, p, span, a {
+    color: #000000 !important;
+  }
+
+  .text-indigo-400,
+  .text-indigo-300 {
+    color: #4f46e5 !important;
+  }
+
+  .text-slate-400,
+  .text-slate-300 {
+    color: #475569 !important;
+  }
+
+  /* Prevent awkward page breaks inside activities */
+  .space-y-4 > div,
+  .grid > div {
+    break-inside: avoid;
+  }
+}
